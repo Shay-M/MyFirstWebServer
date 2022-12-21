@@ -27,8 +27,8 @@ public class ToDo extends Command {
 
 
     @Override
-    public final String go(final String[] untrust_nameParts) {
-        return addTaskToList(untrust_nameParts[2]);
+    public final String go(final String[] nameParts) {
+        return addTaskToList(nameParts[2]);
     }
 
 

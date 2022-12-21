@@ -1,3 +1,4 @@
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.IOException;
@@ -15,8 +16,10 @@ public final class MyFirstWebServer {
 
     public static void main(final String[] args) {
         final Logger logger = Logger.getLogger(MyFirstWebServer.class.getCanonicalName());
+
         try {
             final SuperSimpleWebServer server = new SuperSimpleWebServer(PORT, logger);
+            Router router = new Router(logger);
 
             final List<ICommand> urls = new ArrayList<ICommand>();
             urls.add(new Home("/", logger));
@@ -25,20 +28,21 @@ public final class MyFirstWebServer {
             urls.add(new Resume("resume", logger, toDo));
             urls.add(toDo);
 
+
             while (true) {
                 try (SuperSimpleWebServer.Request request = server.waitForRequest()) {
-                    String untruest_uri = request.getUri();//on list?
-
-                    String[] untruest_nameParts = untruest_uri.split("/");
+                    String untruest_uri = request.getUri();
+                    String uri = request.getUri();
+                    String[] nameParts = uri.split("/");
                     try {
-                        final String urlRout = (untruest_nameParts[1]).toLowerCase();
+                        final String urlRout = (nameParts[1]).toLowerCase();
                         for (ICommand ICommandInList : urls) {
                             if (ICommandInList.getUrl().equals(urlRout)) {
-                                request.getWriter().write(ICommandInList.go(untruest_nameParts));
+                                request.getWriter().write(ICommandInList.go(nameParts));
                             }
                         }
                     } catch (ArrayIndexOutOfBoundsException ex) {
-                        request.getWriter().write(urls.get(0).go(untruest_nameParts));
+                        request.getWriter().write(urls.get(0).go(nameParts));
                     }
                 }
             }
@@ -50,9 +54,13 @@ public final class MyFirstWebServer {
     }
 
     public static boolean validateHTTP_URI(String uri) {
-        final Logger logger = Logger.getLogger(MyFirstWebServer.class.getCanonicalName());
-        logger.log(Level.SEVERE, "uri: " + uri);
-        return true;
+        final URL url;
+        try {
+            url = new URL(uri);
+        } catch (Exception e1) {
+            return false;
+        }
+        return "http".equals(url.getProtocol());
     }
 }
 
