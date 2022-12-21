@@ -23,11 +23,14 @@ public class Resume extends Command {
     }
 
     @Override
-    public final String go(String[] nameParts) {
+    public final String go(final String[] nameParts) {
         return showProfile();
     }
 
     private String listToHtml(List<String> toDoList) {
+        if (toDoList.isEmpty()) {
+            return "No task found!";
+        }
         StringBuilder str;
         str = new StringBuilder("<ul>");
 
