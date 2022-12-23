@@ -36,7 +36,7 @@ public class Router {
                     }
                 }
             }
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             m_logger.log(Level.SEVERE, "IOException " + ex.getMessage());
         }
     }
